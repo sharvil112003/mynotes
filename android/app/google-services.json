@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "817845161823",
+    "project_id": "mynotes-complete",
+    "storage_bucket": "mynotes-complete.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817845161823:android:27e3230ade3638e60e30ea",
+        "android_client_info": {
+          "package_name": "com.shark.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2FMg1t_J68o5if8JDOXtQjEQKBLcXLE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
