@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mynotes/firebase_options.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -33,121 +31,119 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
-        child: FutureBuilder(
-          future: Firebase.initializeApp(
-              options: DefaultFirebaseOptions.currentPlatform),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text(
-                      'User Login',
-                      style: GoogleFonts.poppins(
-                          color: Colors.amber, fontSize: 25),
-                    ),
-                    SizedBox(
-                      height: 85,
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.email,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            maxLines: 1,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                                hintText: 'Enter your Email',
-                                hintStyle: GoogleFonts.poppins(
-                                  color: Colors.grey,
-                                )),
-                            controller: _emailcontroller,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.password,
-                          color: Colors.grey,
-                          size: 30,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: TextField(
-                            autocorrect: false,
-                            obscureText: true,
-                            maxLength: 8,
-                            maxLines: 1,
-                            enableSuggestions: false,
-                            decoration: InputDecoration(
-                                hintText: 'Enter your Password',
-                                hintStyle:
-                                    GoogleFonts.poppins(color: Colors.grey)),
-                            controller: _passwordcontroller,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 60,
-                    ),
-                    Center(
-                        child: SizedBox(
-                      height: 40,
-                      width: 160,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              backgroundColor: Colors.amber),
-                          onPressed: () async {
-                            final email = _emailcontroller.text;
-                            final password = _passwordcontroller.text;
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(
+            'User Login',
+            style: GoogleFonts.poppins(color: Colors.amber, fontSize: 25),
+          ),
+          SizedBox(
+            height: 85,
+          ),
+          Row(
+            children: [
+              const Icon(
+                Icons.email,
+                size: 30,
+                color: Colors.grey,
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: TextField(
+                  maxLines: 1,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                      hintText: 'Enter your Email',
+                      hintStyle: GoogleFonts.poppins(
+                        color: Colors.grey,
+                      )),
+                  controller: _emailcontroller,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Icon(
+                Icons.password,
+                color: Colors.grey,
+                size: 30,
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: TextField(
+                  autocorrect: false,
+                  obscureText: true,
+                  maxLength: 8,
+                  maxLines: 1,
+                  enableSuggestions: false,
+                  decoration: InputDecoration(
+                      hintText: 'Enter your Password',
+                      hintStyle: GoogleFonts.poppins(color: Colors.grey)),
+                  controller: _passwordcontroller,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 60,
+          ),
+          Center(
+            child: SizedBox(
+              height: 40,
+              width: 160,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    backgroundColor: Colors.amber),
+                onPressed: () async {
+                  final email = _emailcontroller.text;
+                  final password = _passwordcontroller.text;
 
-                            try {
-                              final userCred = await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                      email: email, password: password);
+                  try {
+                    final userCred = await FirebaseAuth.instance
+                        .signInWithEmailAndPassword(
+                            email: email, password: password);
 
-                              print(userCred);
-                            } on FirebaseAuthException catch (e) {
-                              if (e.code == 'user-not-found') {
-                                print('User not found.');
-                              }
+                    print(userCred);
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'user-not-found') {
+                      print('User not found.');
+                    }
 
-                              if (e.code == 'wrong-password') {
-                                print('Wrong Password');
-                              }
-                            }
-                          },
-                          child: Text(
-                            'Login',
-                            style: GoogleFonts.poppins(color: Colors.black),
-                          )),
-                    ))
-                  ],
-                );
-              default:
-                return const Text('Loading ..');
-            }
-          },
-        ),
+                    if (e.code == 'wrong-password') {
+                      print('Wrong Password');
+                    }
+                  }
+                },
+                child: Text(
+                  'Login',
+                  style: GoogleFonts.poppins(color: Colors.black),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/register/', (route) => false);
+            },
+            child: Text(
+              'Not registered yet ? Register Here',
+              style: GoogleFonts.poppins(color: Colors.amber),
+            ),
+          )
+        ],
       ),
     );
   }
