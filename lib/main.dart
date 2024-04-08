@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/firebase_options.dart';
 import 'package:mynotes/views/login_view.dart';
 import 'package:mynotes/views/register_view.dart';
 import 'package:mynotes/views/verify_email_view.dart';
-import 'dart:developer' as developer;
+// import 'dart:developer' as developer;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,8 +16,9 @@ void main() {
     theme: ThemeData.dark(),
     home: const HomePage(),
     routes: {
-      '/login/': (context) => const LoginView(),
-      '/register/': (context) => const RegisterView(),
+      loginRoute: (context) => const LoginView(),
+      registerRoute: (context) => const RegisterView(),
+      notesRoute: (context) => const NotesView(),
     },
   ));
 }
@@ -42,11 +44,12 @@ class HomePage extends StatelessWidget {
             } else {
               return const LoginView();
             }
-            return const Text('Done');
 
           default:
-            return const CircularProgressIndicator(
-              color: Colors.amber,
+            return const Scaffold(
+              body: CircularProgressIndicator(
+                color: Colors.amber,
+              ),
             );
         }
       },
@@ -86,8 +89,12 @@ class _NotesViewState extends State<NotesView> {
               switch (value) {
                 case MenuAction.logout:
                   final shouldLogOut = await showLogOutDialog(context);
-                  developer.log(shouldLogOut.toString());
-                  break;
+                  print(shouldLogOut);
+                  if (shouldLogOut != null && shouldLogOut) {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(loginRoute, (_) => false);
+                  }
               }
             },
             itemBuilder: (context) {
@@ -109,7 +116,7 @@ class _NotesViewState extends State<NotesView> {
   }
 }
 
-Future<bool> showLogOutDialog(BuildContext context) {
+Future<bool?> showLogOutDialog(BuildContext context) {
   return showDialog<bool>(
     context: context,
     builder: (context) {
@@ -128,7 +135,7 @@ Future<bool> showLogOutDialog(BuildContext context) {
                       color: Colors.red, fontWeight: FontWeight.bold))),
           TextButton(
               onPressed: () {
-                Navigator.of(context).pop(false);
+                Navigator.pop(context, false);
               },
               child: Text(
                 'Cancel',
@@ -138,5 +145,5 @@ Future<bool> showLogOutDialog(BuildContext context) {
         ],
       );
     },
-  ).then((value) => false);
+  );
 }
