@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/enums/menu_action.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/crud/notes_service.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -12,12 +13,27 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+  late final NotesService _notesService;
+
+  @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Main Page',
+          'Your Notes',
           style: GoogleFonts.poppins(color: Colors.amber),
         ),
         backgroundColor: Colors.white.withOpacity(0.1),
@@ -27,6 +43,14 @@ class _NotesViewState extends State<NotesView> {
           ),
         ),
         actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(newNotesRoute);
+              },
+              icon: const Icon(
+                Icons.add,
+                color: Colors.amber,
+              )),
           PopupMenuButton<MenuAction>(
             iconColor: Colors.amber,
             color: Colors.white.withOpacity(0.05),
@@ -56,7 +80,28 @@ class _NotesViewState extends State<NotesView> {
         ],
       ),
       backgroundColor: Colors.black,
-      body: const Column(children: []),
+      body: FutureBuilder(
+        future: _notesService.getOrCreateUser(email: userEmail),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return StreamBuilder(
+                  stream: _notesService.allNotes,
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                      case ConnectionState.active:
+                        return const Text('Waiting for notes...');
+                      default:
+                        return const CircularProgressIndicator();
+                    }
+                  });
+
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
