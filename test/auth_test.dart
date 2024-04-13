@@ -96,8 +96,10 @@ class MockAuthProvider implements AuthProvider {
     }
 
     if (password == '12121212') throw WrongPasswordAuthException();
-    const user =
-        AuthUser(isEmailVerified: false, email: 'sharvil.22111277@viit.ac.in');
+    const user = AuthUser(
+        id: 'my_id',
+        isEmailVerified: false,
+        email: 'sharvil.22111277@viit.ac.in');
     _user = user;
 
     return Future.value(user);
@@ -116,8 +118,10 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitializedException();
     final user = _user;
     if (user == null) throw UserNotFoundAuthException();
-    const newUser =
-        AuthUser(isEmailVerified: true, email: 'sharvil.22111277@viit.ac.in');
+    const newUser = AuthUser(
+        id: 'my_id',
+        isEmailVerified: true,
+        email: 'sharvil.22111277@viit.ac.in');
     _user = newUser;
   }
 }

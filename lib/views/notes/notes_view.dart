@@ -15,7 +15,7 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
-  String get userEmail => AuthService.firebase().currentUser!.email!;
+  String get userEmail => AuthService.firebase().currentUser!.email;
   late final NotesService _notesService;
 
   @override
@@ -55,7 +55,7 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   final shouldLogOut = await showLogOutDialog(context);
                   // print(shouldLogOut);
-                  if (shouldLogOut != null && shouldLogOut) {
+                  if (shouldLogOut) {
                     await AuthService.firebase().logOut();
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil(loginRoute, (_) => false);
