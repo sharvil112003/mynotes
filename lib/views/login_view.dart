@@ -5,6 +5,7 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
+import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utilities/dialogues/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -44,7 +45,7 @@ class _LoginViewState extends State<LoginView> {
             'User Login',
             style: GoogleFonts.poppins(color: Colors.amber, fontSize: 25),
           ),
-          SizedBox(
+          const SizedBox(
             height: 85,
           ),
           Row(
@@ -103,36 +104,40 @@ class _LoginViewState extends State<LoginView> {
             child: SizedBox(
               height: 40,
               width: 160,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    backgroundColor: Colors.amber),
-                onPressed: () async {
-                  final email = _emailcontroller.text;
-                  final password = _passwordcontroller.text;
-
-                  try {
+              child: BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) async {
+                  if (state is AuthStateLoggedOut) {
+                    if (state.exception is UserNotFoundAuthException) {
+                      await showErrorDialog(context, 'User not found');
+                    } else if (state.exception is WrongPasswordAuthException) {
+                      await showErrorDialog(context, 'Wrong Credentials');
+                    } else if (state.exception is GenericAuthException) {
+                      await showErrorDialog(context, 'Authentication Error');
+                    }
+                  }
+                },
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      backgroundColor: Colors.amber),
+                  onPressed: () async {
+                    final email = _emailcontroller.text;
+                    final password = _passwordcontroller.text;
                     context.read<AuthBloc>().add(AuthEventLogIn(
                           email,
                           password,
                         ));
-                  } on UserNotFoundAuthException {
-                    await showErrorDialog(context, 'User not found.');
-                  } on WrongPasswordAuthException {
-                    await showErrorDialog(context, 'Wrong credentials.');
-                  } on GenericAuthException {
-                    await showErrorDialog(context, 'Authentication Error.');
-                  }
-                },
-                child: Text(
-                  'Login',
-                  style: GoogleFonts.poppins(color: Colors.black),
+                  },
+                  child: Text(
+                    'Login',
+                    style: GoogleFonts.poppins(color: Colors.black),
+                  ),
                 ),
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           TextButton(
